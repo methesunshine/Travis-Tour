@@ -1,6 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../supabase';
 
 const Contact = () => {
+    const [formData, setFormData] = useState({
+        fullName: '',
+        email: '',
+        phone: '',
+        message: ''
+    });
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         const handleScroll = () => {
             const elements = document.querySelectorAll('.animate-on-scroll');
@@ -17,9 +26,35 @@ const Contact = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const handleSubmit = (e) => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        alert('Thank you for contacting Travis Tours! We will get back to you shortly.');
+        setLoading(true);
+
+        try {
+            const { error } = await supabase
+                .from('contact_submissions')
+                .insert([{
+                    full_name: formData.fullName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    message: formData.message
+                }]);
+
+            if (error) throw error;
+
+            alert('Thank you for contacting Travis Tours! Your message has been saved.');
+            setFormData({ fullName: '', email: '', phone: '', message: '' });
+        } catch (error) {
+            console.error('Error saving message:', error);
+            alert('Error sending message. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -82,25 +117,55 @@ const Contact = () => {
                         <form onSubmit={handleSubmit} className="premium-form">
                             <div className="form-group">
                                 <label>Full Name</label>
-                                <input type="text" placeholder="Enter your name" required />
+                                <input
+                                    type="text"
+                                    name="fullName"
+                                    value={formData.fullName}
+                                    onChange={handleChange}
+                                    placeholder="Enter your name"
+                                    required
+                                />
                             </div>
 
                             <div className="form-group">
                                 <label>Email Address</label>
-                                <input type="email" placeholder="Enter your email" required />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="Enter your email"
+                                    required
+                                />
                             </div>
 
                             <div className="form-group">
                                 <label>Phone Number</label>
-                                <input type="tel" placeholder="Enter phone number" required />
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    placeholder="Enter phone number"
+                                    required
+                                />
                             </div>
 
                             <div className="form-group">
                                 <label>Message</label>
-                                <textarea rows="5" placeholder="How can we help you?" required></textarea>
+                                <textarea
+                                    name="message"
+                                    value={formData.message}
+                                    onChange={handleChange}
+                                    rows="5"
+                                    placeholder="How can we help you?"
+                                    required
+                                ></textarea>
                             </div>
 
-                            <button type="submit" className="btn btn-primary large full-width">Send Message</button>
+                            <button type="submit" className="btn btn-primary large full-width" disabled={loading}>
+                                {loading ? 'Sending...' : 'Send Message'}
+                            </button>
                         </form>
                     </div>
                 </div>

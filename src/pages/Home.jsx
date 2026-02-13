@@ -22,18 +22,21 @@ const Home = () => {
     const featuredDestinations = [
         {
             title: 'MUMBAI',
+            duration: '2 Days',
             country: 'MAHARASHTRA',
             image: '/mumbai-card.png',
             desc: 'The city of dreams, where history meets modern luxury.'
         },
         {
             title: 'GOA',
+            duration: '7 Days',
             country: 'COASTAL INDIA',
             image: '/goa-card.png',
             desc: 'Pristine beaches and elite tropical retreats.'
         },
         {
             title: 'PUNE',
+            duration: '4 Days',
             country: 'SAHYADRI RANGES',
             image: '/pune-card.png',
             desc: 'Lush greenery and heritage hilltop escapes.'
@@ -56,7 +59,10 @@ const Home = () => {
                         <div key={index} className="dest-card animate-on-scroll fade-up">
                             <div className="dest-image" style={{ backgroundImage: `url(${dest.image})` }}>
                                 <div className="dest-overlay">
-                                    <span className="dest-country">{dest.country}</span>
+                                    <div className="dest-badge-row">
+                                        <span className="dest-country">{dest.country}</span>
+                                        <span className="dest-duration">🕐 {dest.duration}</span>
+                                    </div>
                                     <h3>{dest.title}</h3>
                                     <p>{dest.desc}</p>
                                     <Link to="/packages" className="btn-text">View Packages →</Link>

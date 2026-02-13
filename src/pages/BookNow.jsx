@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
+import { useAuth } from '../context/AuthContext';
 
 const BookNow = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const initialDestination = location.state?.destination || 'Mumbai';
     const initialPackage = location.state?.packageType || 'Luxury Package';
 
@@ -11,8 +15,12 @@ const BookNow = () => {
         packageType: initialPackage,
         date: '',
         travelers: 1,
+        duration: 1,
         payment: 'Pay Online'
     });
+
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
 
     const prices = {
         'Budget Package': 25000,
@@ -49,9 +57,49 @@ const BookNow = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const updateDuration = (amount) => {
+        setBookingDetails(prev => ({
+            ...prev,
+            duration: Math.max(1, prev.duration + amount)
+        }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        alert(`Booking Initialized for ${bookingDetails.destination}!\nTotal Amount: ₹${(prices[bookingDetails.packageType] * bookingDetails.travelers).toLocaleString()}`);
+
+        if (!user) {
+            alert('Please login to book a tour!');
+            navigate('/login');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const { error } = await supabase
+                .from('bookings')
+                .insert([{
+                    destination: bookingDetails.destination,
+                    package_type: bookingDetails.packageType,
+                    travel_date: bookingDetails.date,
+                    travelers: bookingDetails.travelers,
+                    total_days: bookingDetails.duration,
+                    payment_option: bookingDetails.payment,
+                    user_id: user.id
+                }]);
+
+            if (error) throw error;
+
+            setSuccess(true);
+            alert(`Booking Successfully Saved for ${bookingDetails.destination}!`);
+        } catch (error) {
+            console.error('Error saving booking:', error);
+            const errorMessage = error.message || 'Unknown error';
+            const errorDetails = error.details || '';
+            alert(`Error saving booking: ${errorMessage}\n${errorDetails}`);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -105,6 +153,15 @@ const BookNow = () => {
                                             <button type="button" onClick={() => updateTravelers(1)}>+</button>
                                         </div>
                                     </div>
+
+                                    <div className="form-group">
+                                        <label>⏳ Number of Days</label>
+                                        <div className="traveler-controls">
+                                            <button type="button" onClick={() => updateDuration(-1)} disabled={bookingDetails.duration <= 1}>-</button>
+                                            <input type="number" value={bookingDetails.duration} readOnly />
+                                            <button type="button" onClick={() => updateDuration(1)}>+</button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="form-group payment-group">
@@ -121,7 +178,9 @@ const BookNow = () => {
                                     </div>
                                 </div>
 
-                                <button type="submit" className="btn btn-primary large full-width">Confirm Booking</button>
+                                <button type="submit" className="btn btn-primary large full-width" disabled={loading}>
+                                    {loading ? 'Processing...' : 'Confirm Booking'}
+                                </button>
                                 <p className="trust-text">🔒 Your information is secure and protected.</p>
                             </form>
                         </div>
@@ -144,10 +203,14 @@ const BookNow = () => {
                                     <span>Travelers:</span>
                                     <strong>{bookingDetails.travelers} Person(s)</strong>
                                 </div>
+                                <div className="summary-item">
+                                    <span>Duration:</span>
+                                    <strong>{bookingDetails.duration} Day(s)</strong>
+                                </div>
                                 <div className="summary-divider"></div>
                                 <div className="summary-total">
                                     <span>Estimated Price:</span>
-                                    <strong className="total-amount">₹{(prices[bookingDetails.packageType] * bookingDetails.travelers).toLocaleString()}</strong>
+                                    <strong className="total-amount">₹{(prices[bookingDetails.packageType] * bookingDetails.travelers * bookingDetails.duration).toLocaleString()}</strong>
                                 </div>
                             </div>
                         </div>

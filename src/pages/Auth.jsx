@@ -1,32 +1,109 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
 
 const Auth = () => {
     const [activeTab, setActiveTab] = useState('login');
     const [showPassword, setShowPassword] = useState(false);
     const [loginWithOTP, setLoginWithOTP] = useState(false);
     const [isForgotPassword, setIsForgotPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+    // Form data
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+        fullName: '',
+        phone: '',
+        confirmPassword: ''
+    });
+
     useEffect(() => {
-        // Simple animation on mount
         const form = document.querySelector('.auth-card');
         if (form) {
             form.classList.add('fade-in');
         }
     }, [activeTab, isForgotPassword]);
 
-    const handleLogin = (e) => {
-        e.preventDefault();
-        // Mock login
-        navigate('/dashboard');
+    const handleInputChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleRegister = (e) => {
+    const [unconfirmedEmail, setUnconfirmedEmail] = useState(null);
+
+    const handleResendEmail = async () => {
+        if (!unconfirmedEmail) return;
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.resend({
+                type: 'signup',
+                email: unconfirmedEmail
+            });
+            if (error) throw error;
+            alert('Verification email resent! Please check your inbox and spam folder.');
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Mock register
-        setActiveTab('login');
-        alert('Account created! Please login.');
+        setLoading(true);
+        setUnconfirmedEmail(null);
+        try {
+            const { error } = await supabase.auth.signInWithPassword({
+                email: formData.email,
+                password: formData.password
+            });
+            if (error) {
+                if (error.message.includes('Email not confirmed')) {
+                    setUnconfirmedEmail(formData.email);
+                    return;
+                }
+                throw error;
+            }
+            navigate('/dashboard');
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleRegister = async (e) => {
+        e.preventDefault();
+        if (formData.password !== formData.confirmPassword) {
+            alert("Passwords don't match");
+            return;
+        }
+        setLoading(true);
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: formData.email,
+                password: formData.password,
+                options: {
+                    data: {
+                        full_name: formData.fullName,
+                        phone: formData.phone
+                    }
+                }
+            });
+            if (error) throw error;
+
+            if (data?.session) {
+                navigate('/dashboard');
+            } else {
+                alert('Account created! Please check your email for verification.');
+                setActiveTab('login');
+            }
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -61,7 +138,14 @@ const Auth = () => {
                                     <form className="auth-form" onSubmit={handleLogin}>
                                         <div className="form-group">
                                             <label>Email Address</label>
-                                            <input type="email" placeholder="name@example.com" required />
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                placeholder="name@example.com"
+                                                required
+                                            />
                                         </div>
 
                                         <div className="form-group">
@@ -74,6 +158,9 @@ const Auth = () => {
                                             <div className="password-input-wrapper">
                                                 <input
                                                     type={showPassword || loginWithOTP ? 'text' : 'password'}
+                                                    name="password"
+                                                    value={formData.password}
+                                                    onChange={handleInputChange}
                                                     placeholder={loginWithOTP ? 'Enter 6-digit OTP' : 'Enter password'}
                                                     required
                                                 />
@@ -97,7 +184,23 @@ const Auth = () => {
                                             <span>Login with OTP</span>
                                         </div>
 
-                                        <button type="submit" className="btn btn-primary full-width large">Login</button>
+                                        {unconfirmedEmail && (
+                                            <div className="auth-alert warning">
+                                                <p>Email not confirmed. Please check your inbox or spam folder.</p>
+                                                <button
+                                                    type="button"
+                                                    onClick={handleResendEmail}
+                                                    className="btn-text"
+                                                    style={{ color: 'var(--accent-color)', fontWeight: 'bold' }}
+                                                >
+                                                    Resend Verification Email?
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        <button type="submit" className="btn btn-primary full-width large" disabled={loading}>
+                                            {loading ? 'Authenticating...' : 'Login'}
+                                        </button>
                                         <p className="auth-footer">
                                             Don't have an account? <span onClick={() => setActiveTab('register')}>Register</span>
                                         </p>
@@ -106,31 +209,68 @@ const Auth = () => {
                                     <form className="auth-form" onSubmit={handleRegister}>
                                         <div className="form-group">
                                             <label>Full Name</label>
-                                            <input type="text" placeholder="John Doe" required />
+                                            <input
+                                                type="text"
+                                                name="fullName"
+                                                value={formData.fullName}
+                                                onChange={handleInputChange}
+                                                placeholder="John Doe"
+                                                required
+                                            />
                                         </div>
                                         <div className="form-group">
                                             <label>Email Address</label>
-                                            <input type="email" placeholder="name@example.com" required />
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                placeholder="name@example.com"
+                                                required
+                                            />
                                         </div>
                                         <div className="form-group">
                                             <label>Phone Number</label>
-                                            <input type="tel" placeholder="+91 XXXXX XXXXX" required />
+                                            <input
+                                                type="tel"
+                                                name="phone"
+                                                value={formData.phone}
+                                                onChange={handleInputChange}
+                                                placeholder="+91 XXXXX XXXXX"
+                                                required
+                                            />
                                         </div>
                                         <div className="form-grid">
                                             <div className="form-group">
                                                 <label>Password</label>
-                                                <input type="password" placeholder="••••••••" required />
+                                                <input
+                                                    type="password"
+                                                    name="password"
+                                                    value={formData.password}
+                                                    onChange={handleInputChange}
+                                                    placeholder="••••••••"
+                                                    required
+                                                />
                                             </div>
                                             <div className="form-group">
                                                 <label>Confirm Password</label>
-                                                <input type="password" placeholder="••••••••" required />
+                                                <input
+                                                    type="password"
+                                                    name="confirmPassword"
+                                                    value={formData.confirmPassword}
+                                                    onChange={handleInputChange}
+                                                    placeholder="••••••••"
+                                                    required
+                                                />
                                             </div>
                                         </div>
                                         <div className="terms-checkbox">
                                             <input type="checkbox" id="terms" required />
                                             <label htmlFor="terms">I agree to the Terms & Conditions</label>
                                         </div>
-                                        <button type="submit" className="btn btn-primary full-width large">Create Account</button>
+                                        <button type="submit" className="btn btn-primary full-width large" disabled={loading}>
+                                            {loading ? 'Creating Account...' : 'Create Account'}
+                                        </button>
                                         <p className="auth-footer">
                                             Already have an account? <span onClick={() => setActiveTab('login')}>Login</span>
                                         </p>

@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database / Backup Scripts
+*_duration.js
+*tables.js
+*_bucket.js
+*_migration.js
+*_policies.js
+*.sql

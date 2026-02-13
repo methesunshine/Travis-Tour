@@ -6,6 +6,7 @@ const packageData = [
     {
         id: 'm1',
         city: 'Mumbai',
+        duration: '2 Days',
         image: '/mumbai-card.png',
         type: 'Budget',
         title: 'Mumbai Budget Explorer',
@@ -17,6 +18,7 @@ const packageData = [
     {
         id: 'm2',
         city: 'Mumbai',
+        duration: '2 Days',
         image: '/mumbai-card.png',
         type: 'Couple',
         title: 'Mumbai Romantic Escape',
@@ -28,6 +30,7 @@ const packageData = [
     {
         id: 'm3',
         city: 'Mumbai',
+        duration: '2 Days',
         image: '/mumbai-card.png',
         type: 'Family',
         title: 'Mumbai Family Fun',
@@ -39,6 +42,7 @@ const packageData = [
     {
         id: 'm4',
         city: 'Mumbai',
+        duration: '2 Days',
         image: '/mumbai-card.png',
         type: 'Luxury',
         title: 'Mumbai Royal Grandeur',
@@ -51,6 +55,7 @@ const packageData = [
     {
         id: 'g1',
         city: 'Goa',
+        duration: '7 Days',
         image: '/goa-card.png',
         type: 'Budget',
         title: 'Goa Beach Backpacker',
@@ -62,6 +67,7 @@ const packageData = [
     {
         id: 'g2',
         city: 'Goa',
+        duration: '7 Days',
         image: '/goa-card.png',
         type: 'Couple',
         title: 'Goa Honeymoon Bliss',
@@ -73,6 +79,7 @@ const packageData = [
     {
         id: 'g3',
         city: 'Goa',
+        duration: '7 Days',
         image: '/goa-card.png',
         type: 'Family',
         title: 'Goa Family Retreat',
@@ -84,6 +91,7 @@ const packageData = [
     {
         id: 'g4',
         city: 'Goa',
+        duration: '7 Days',
         image: '/goa-card.png',
         type: 'Luxury',
         title: 'Goa Elite Coastal',
@@ -96,6 +104,7 @@ const packageData = [
     {
         id: 'p1',
         city: 'Pune',
+        duration: '4 Days',
         image: '/pune-card.png',
         type: 'Budget',
         title: 'Pune Heritage Budget',
@@ -107,6 +116,7 @@ const packageData = [
     {
         id: 'p2',
         city: 'Pune',
+        duration: '4 Days',
         image: '/pune-card.png',
         type: 'Couple',
         title: 'Pune Hilltop Retreat',
@@ -118,6 +128,7 @@ const packageData = [
     {
         id: 'p3',
         city: 'Pune',
+        duration: '4 Days',
         image: '/pune-card.png',
         type: 'Family',
         title: 'Pune Family Getaway',
@@ -129,6 +140,7 @@ const packageData = [
     {
         id: 'p4',
         city: 'Pune',
+        duration: '4 Days',
         image: '/pune-card.png',
         type: 'Luxury',
         title: 'Pune Signature Luxury',
@@ -192,7 +204,10 @@ const Packages = () => {
                                         <div className="package-card-content">
                                             <div className="package-icon-small">{pkg.icon}</div>
                                             <h3>{pkg.title}</h3>
-                                            <div className="package-price">{pkg.price}</div>
+                                            <div className="package-price-row">
+                                                <div className="package-price">{pkg.price}</div>
+                                                <div className="package-duration">🕐 {pkg.duration}</div>
+                                            </div>
                                             <div className="package-meta">Best for: {pkg.bestFor}</div>
                                             <ul className="package-includes">
                                                 {pkg.includes.map((item, index) => (

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { user, signOut } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -19,6 +22,12 @@ const Navbar = () => {
 
     const closeMobileMenu = () => {
         setMobileMenuOpen(false);
+    };
+
+    const handleSignOut = async () => {
+        await signOut();
+        navigate('/');
+        closeMobileMenu();
     };
 
     return (
@@ -37,7 +46,14 @@ const Navbar = () => {
                 </ul>
 
                 <div className="nav-actions">
-                    <NavLink to="/login" className="btn btn-outline" onClick={closeMobileMenu}>Login / Register</NavLink>
+                    {user ? (
+                        <>
+                            <NavLink to="/dashboard" className="btn btn-outline" onClick={closeMobileMenu}>Dashboard</NavLink>
+                            <button onClick={handleSignOut} className="btn-text" style={{ marginLeft: '10px' }}>Sign Out</button>
+                        </>
+                    ) : (
+                        <NavLink to="/login" className="btn btn-outline" onClick={closeMobileMenu}>Login / Register</NavLink>
+                    )}
                     <NavLink to="/book" className="btn btn-primary" onClick={closeMobileMenu}>Book Now</NavLink>
                 </div>
 
