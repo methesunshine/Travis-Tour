@@ -10,7 +10,7 @@ const packageData = [
         image: '/mumbai-card.png',
         type: 'Budget',
         title: 'Mumbai Budget Explorer',
-        price: '₹20,000 – ₹30,000',
+        price: '₹25,000',
         includes: ['2★ / 3★ Hotel', 'Breakfast only', 'Shared AC transport', 'Group sightseeing'],
         bestFor: 'Students & budget travelers',
         icon: '🎒'
@@ -22,7 +22,7 @@ const packageData = [
         image: '/mumbai-card.png',
         type: 'Couple',
         title: 'Mumbai Romantic Escape',
-        price: '₹35,000 – ₹50,000',
+        price: '₹45,000',
         includes: ['3★ / 4★ Hotel', 'Private cab', 'Candlelight dinner (optional)'],
         bestFor: 'Couples',
         icon: '💑'
@@ -34,7 +34,7 @@ const packageData = [
         image: '/mumbai-card.png',
         type: 'Family',
         title: 'Mumbai Family Fun',
-        price: '₹45,000 – ₹65,000',
+        price: '₹85,000',
         includes: ['Family-friendly hotel', 'Breakfast + Dinner', 'Guided sightseeing', 'Spacious AC vehicle'],
         bestFor: 'Families',
         icon: '👨‍👩‍👧‍👦'
@@ -46,7 +46,7 @@ const packageData = [
         image: '/mumbai-card.png',
         type: 'Luxury',
         title: 'Mumbai Royal Grandeur',
-        price: '₹65,000 – ₹85,000',
+        price: '₹1,20,000',
         includes: ['4★ / 5★ Hotel', 'All meals', 'Private chauffeur'],
         bestFor: 'Premium travelers',
         icon: '👑'
@@ -59,7 +59,7 @@ const packageData = [
         image: '/goa-card.png',
         type: 'Budget',
         title: 'Goa Beach Backpacker',
-        price: '₹30,000 – ₹45,000',
+        price: '₹25,000',
         includes: ['2★ / 3★ Hotel', 'Breakfast only', 'Shared AC transport', 'Group sightseeing'],
         bestFor: 'Budget travelers',
         icon: '🏖️'
@@ -71,7 +71,7 @@ const packageData = [
         image: '/goa-card.png',
         type: 'Couple',
         title: 'Goa Honeymoon Bliss',
-        price: '₹50,000 – ₹65,000',
+        price: '₹45,000',
         includes: ['3★ / 4★ Resort', 'Private cab', 'Candlelight dinner (optional)', 'Beach-view hotel (optional)'],
         bestFor: 'Couples & honeymoon',
         icon: '💖'
@@ -83,7 +83,7 @@ const packageData = [
         image: '/goa-card.png',
         type: 'Family',
         title: 'Goa Family Retreat',
-        price: '₹60,000 – ₹80,000',
+        price: '₹85,000',
         includes: ['Family-friendly resort', 'Breakfast + Dinner', 'Guided sightseeing', 'Spacious AC vehicle'],
         bestFor: 'Families',
         icon: '👨‍👩‍👧‍👦'
@@ -95,7 +95,7 @@ const packageData = [
         image: '/goa-card.png',
         type: 'Luxury',
         title: 'Goa Elite Coastal',
-        price: '₹80,000 – ₹95,000',
+        price: '₹1,20,000',
         includes: ['4★ / 5★ Resort', 'All meals', 'Private chauffeur', 'Cruise dinner (optional)'],
         bestFor: 'Premium travelers',
         icon: '🍾'
@@ -108,7 +108,7 @@ const packageData = [
         image: '/pune-card.png',
         type: 'Budget',
         title: 'Pune Heritage Budget',
-        price: '₹25,000 – ₹35,000',
+        price: '₹25,000',
         includes: ['2★ / 3★ Hotel', 'Breakfast only', 'Shared AC transport', 'Group sightseeing'],
         bestFor: 'Students & budget travelers',
         icon: '🏛️'
@@ -120,7 +120,7 @@ const packageData = [
         image: '/pune-card.png',
         type: 'Couple',
         title: 'Pune Hilltop Retreat',
-        price: '₹40,000 – ₹55,000',
+        price: '₹45,000',
         includes: ['3★ / 4★ Hotel', 'Private cab', 'Candlelight dinner (optional)'],
         bestFor: 'Couples',
         icon: '⛰️'
@@ -132,7 +132,7 @@ const packageData = [
         image: '/pune-card.png',
         type: 'Family',
         title: 'Pune Family Getaway',
-        price: '₹50,000 – ₹70,000',
+        price: '₹85,000',
         includes: ['Family-friendly hotel', 'Breakfast + Dinner', 'Guided sightseeing', 'Spacious AC vehicle'],
         bestFor: 'Families',
         icon: '🚐'
@@ -144,7 +144,7 @@ const packageData = [
         image: '/pune-card.png',
         type: 'Luxury',
         title: 'Pune Signature Luxury',
-        price: '₹70,000 – ₹90,000',
+        price: '₹1,20,000',
         includes: ['4★ / 5★ Hotel', 'All meals', 'Private chauffeur'],
         bestFor: 'Premium travelers',
         icon: '🌟'

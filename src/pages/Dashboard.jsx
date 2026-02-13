@@ -12,16 +12,18 @@ const Dashboard = () => {
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [showVoucher, setShowVoucher] = useState(false);
     const navigate = useNavigate();
-
+    const [userMessages, setUserMessages] = useState([]);
     const menuItems = [
         { id: 'bookings', label: 'My Bookings', icon: '📅' },
         { id: 'profile', label: 'Profile', icon: '👤' },
         { id: 'payments', label: 'Payments', icon: '💳' },
+        { id: 'messages', label: 'Messages', icon: '✉️' },
     ];
 
     useEffect(() => {
         if (user) {
             fetchBookings();
+            fetchMessages();
         }
     }, [user]);
 
@@ -39,6 +41,20 @@ const Dashboard = () => {
             console.error('Error fetching bookings:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchMessages = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('contact_submissions')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setUserMessages(data || []);
+        } catch (error) {
+            console.error('Error fetching messages:', error);
         }
     };
 
@@ -362,6 +378,42 @@ const Dashboard = () => {
                                         <td>Net Banking</td>
                                         <td><span className="status-badge confirmed">Success</span></td>
                                     </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'messages' && (
+                    <div className="dashboard-section fade-up">
+                        <h2>Contact Messages</h2>
+                        <div className="dashboard-card glassmorphism no-padding overflow-hidden">
+                            <table className="dashboard-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Message</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {userMessages.length > 0 ? (
+                                        userMessages.map(msg => (
+                                            <tr key={msg.id}>
+                                                <td><strong>{msg.full_name}</strong></td>
+                                                <td>{msg.email}</td>
+                                                <td>{msg.phone}</td>
+                                                <td className="message-cell">{msg.message}</td>
+                                                <td>{new Date(msg.created_at).toLocaleDateString()}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="text-center">No messages received yet.</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
